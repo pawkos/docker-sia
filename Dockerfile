@@ -23,7 +23,7 @@ RUN wget "$SIA_RELEASE" && \
 
 RUN wget "$REPERTORY_RELEASE" && \
       mkdir /repertory && \
-      unzip -j "$REPERTORY_ZIP" "${REPERTORY_PACKAGE}" -d /repertory
+      unzip -j "$REPERTORY_ZIP" -d /repertory
 
 FROM debian:stretch-slim
 ARG SIA_DIR="/sia"
