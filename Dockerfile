@@ -68,9 +68,11 @@ WORKDIR "$SIA_DIR"
 
 ENV SIA_DATA_DIR "$SIA_DATA_DIR"
 ENV SIA_MODULES gctwhr
+ENV REPERTORY_DATA_DIR "/mnt/repertory"
 
 ENTRYPOINT socat tcp-listen:9980,reuseaddr,fork tcp:localhost:8000 & \
   ./siad \
     --modules "$SIA_MODULES" \
     --sia-directory "$SIA_DATA_DIR" \
-    --api-addr "localhost:8000"
+    --api-addr "localhost:8000" && \
+  repertory/repertory -f -o big_writes "$REPERTORY_DATA_DIR"
