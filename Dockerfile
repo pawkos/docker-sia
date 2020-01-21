@@ -39,6 +39,24 @@ COPY --from=zip_downloader /repertory "${REPERTORY_DIR}"
 RUN apt-get update
 RUN apt-get install -y socat
 
+# Required system packages
+RUN apt-get update && apt-get -y install \
+  apt-utils \
+  build-essential \
+  curl \
+  pkg-config \
+  cmake \
+  make \
+  gcc \
+  g++ \
+  libfuse-dev \
+  libstdc++-6-dev \
+  diffutils \
+  git \
+  tar \
+  zlib1g-dev \
+  zip
+
 # Workaround for backwards compatibility with old images, which hardcoded the
 # Sia data directory as /mnt/sia. Creates a symbolic link so that any previous
 # path references stored in the Sia host config still work.
