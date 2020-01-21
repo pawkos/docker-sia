@@ -6,6 +6,11 @@ ARG SIA_PACKAGE="Sia-v${SIA_VERSION}-linux-amd64"
 ARG SIA_ZIP="${SIA_PACKAGE}.zip"
 ARG SIA_RELEASE="https://sia.tech/static/releases/${SIA_ZIP}"
 
+ARG REPERTORY_VERSION="1.2.0-release_cd9e992"
+ARG REPERTORY_PACKAGE="repertory_${REPERTORY_VERSION}_debian9"
+ARG REPERTORY_ZIP="${REPERTORY_PACKAGE}.zip"
+ARG REPERTORY_RELEASE="https://bitbucket.org/blockstorage/repertory/downloads/${REPERTORY_ZIP}"
+
 RUN apt-get update
 RUN apt-get install -y \
       wget \
@@ -16,12 +21,20 @@ RUN wget "$SIA_RELEASE" && \
       unzip -j "$SIA_ZIP" "${SIA_PACKAGE}/siac" -d /sia && \
       unzip -j "$SIA_ZIP" "${SIA_PACKAGE}/siad" -d /sia
 
+RUN wget "$REPERTORY_RELEASE" && \
+      mkdir /repertory && \
+      unzip -j "$REPERTORY_ZIP" "${REPERTORY_PACKAGE}" -d /repertory
+
 FROM debian:stretch-slim
 ARG SIA_DIR="/sia"
 ARG SIA_DATA_DIR="/sia-data"
 
+ARG REPERTORY_DIR="/repertory"
+
 COPY --from=zip_downloader /sia/siac "${SIA_DIR}/siac"
 COPY --from=zip_downloader /sia/siad "${SIA_DIR}/siad"
+
+COPY --from=zip_downloader /repertory "${REPERTORY_DIR}"
 
 RUN apt-get update
 RUN apt-get install -y socat
@@ -31,7 +44,7 @@ RUN apt-get install -y socat
 # path references stored in the Sia host config still work.
 RUN ln --symbolic "$SIA_DATA_DIR" /mnt/sia
 
-EXPOSE 9980 9981 9982
+EXPOSE 9980 9981 9982 20000
 
 WORKDIR "$SIA_DIR"
 
