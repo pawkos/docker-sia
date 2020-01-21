@@ -70,8 +70,8 @@ ENV SIA_DATA_DIR "$SIA_DATA_DIR"
 ENV SIA_MODULES gctwhr
 ENV REPERTORY_DATA_DIR "/mnt/repertory"
 
-RUN repertory/repertory -set RemoteMount.EnableRemoteMount true
-RUN repertory/repertory -set RemoteMount.RemoteToken "test"
+RUN cd /repertory && ./repertory -set RemoteMount.EnableRemoteMount true
+RUN cd /repertory && ./repertory -set RemoteMount.RemoteToken "test"
 
 ENTRYPOINT socat tcp-listen:9980,reuseaddr,fork tcp:localhost:8000 & \
   ./siad \
