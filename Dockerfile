@@ -55,12 +55,13 @@ ENV SIA_DATA_DIR "$SIA_DATA_DIR"
 ENV SIA_MODULES gctwhr
 ENV REPERTORY_DATA_DIR "/mnt/repertory"
 
-RUN mkdir REPERTORY_DATA_DIR
+RUN mkdir "$REPERTORY_DATA_DIR"
 
 ENTRYPOINT socat tcp-listen:9980,reuseaddr,fork tcp:localhost:8000 & \
   ./siad \
     --modules "$SIA_MODULES" \
     --sia-directory "$SIA_DATA_DIR" \
     --api-addr "localhost:8000" && \
+   echo "only testing" && \
   /repertory/repertory -set HostConfig.ApiPassword $(< /root/.sia/apipassword) && \
   /repertory/repertory -o big_writes "$REPERTORY_DATA_DIR"
