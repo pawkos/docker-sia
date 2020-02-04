@@ -1,4 +1,4 @@
-FROM debian:stretch-slim AS zip_downloader
+FROM debian:buster-slim AS zip_downloader
 LABEL maintainer="Michael Lynch <michael@mtlynch.io>"
 
 ARG SIA_VERSION="1.4.2.0"
@@ -25,7 +25,7 @@ RUN wget "$REPERTORY_RELEASE" && \
       mkdir /repertory && \
       unzip -j "$REPERTORY_ZIP" -d /repertory
 
-FROM debian:stretch-slim
+FROM debian:buster-slim
 ARG SIA_DIR="/sia"
 ARG SIA_DATA_DIR="/sia-data"
 
@@ -39,23 +39,8 @@ COPY --from=zip_downloader /repertory "${REPERTORY_DIR}"
 RUN apt-get update
 RUN apt-get install -y socat
 
-# Required system packages
-RUN apt-get update && apt-get -y install \
-  apt-utils \
-  build-essential \
-  curl \
-  pkg-config \
-  cmake \
-  make \
-  gcc \
-  g++ \
-  libfuse-dev \
-  libstdc++-6-dev \
-  diffutils \
-  git \
-  tar \
-  zlib1g-dev \
-  zip
+# Required repertory packages
+RUN apt-get -y install libfuse-dev 
 
 # Workaround for backwards compatibility with old images, which hardcoded the
 # Sia data directory as /mnt/sia. Creates a symbolic link so that any previous
