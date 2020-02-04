@@ -20,11 +20,8 @@ RUN wget "$SIA_RELEASE" && \
       unzip -j "$SIA_ZIP" "${SIA_PACKAGE}/siac" -d /sia && \
       unzip -j "$SIA_ZIP" "${SIA_PACKAGE}/siad" -d /sia
 
-RUN echo "**** install repertory ****" && \
-	REPERTORY_RELEASE=$(curl -sX GET "https://api.bitbucket.org/2.0/repositories/blockstorage/repertory/downloads?pagelen=100" \
-	| jq -r 'first(.values[] | select(.links.self.href | endswith("_debian10.zip")).links.self.href)'); 
-
-RUN curl -o /tmp/repertory.zip -L "${REPERTORY_RELEASE}"
+RUN curl -o /tmp/repertory.zip -L $(curl -sX GET "https://api.bitbucket.org/2.0/repositories/blockstorage/repertory/downloads?pagelen=100" \
+	| jq -r 'first(.values[] | select(.links.self.href | endswith("_debian10.zip")).links.self.href)');
 RUN mkdir /repertory
 RUN unzip -j /tmp/repertory.zip -d /repertory
 
