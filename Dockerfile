@@ -6,6 +6,8 @@ ARG SIA_PACKAGE="Sia-v${SIA_VERSION}-linux-amd64"
 ARG SIA_ZIP="${SIA_PACKAGE}.zip"
 ARG SIA_RELEASE="https://sia.tech/static/releases/${SIA_ZIP}"
 
+ARG REPERTORY_RELEASE
+
 RUN apt-get update
 RUN apt-get install -y \
       wget \
@@ -18,8 +20,12 @@ RUN wget "$SIA_RELEASE" && \
       unzip -j "$SIA_ZIP" "${SIA_PACKAGE}/siac" -d /sia && \
       unzip -j "$SIA_ZIP" "${SIA_PACKAGE}/siad" -d /sia
 
-ARG REPERTORY_RELEASE=$(curl -sX GET "https://api.bitbucket.org/2.0/repositories/blockstorage/repertory/downloads?pagelen=100" \
-	| jq -r 'first(.values[] | select(.links.self.href | endswith("_debian10.zip")).links.self.href)');
+RUN if [ -z ${REPERTORY_RELEASE+x} ]; then \
+	REPERTORY_RELEASE=$(curl -sX GET "https://api.bitbucket.org/2.0/repositories/blockstorage/repertory/downloads?pagelen=100" \
+	| jq -r 'first(.values[] | select(.links.self.href | endswith("_debian10.zip")).links.self.href)'); \
+fi
+
+RUN echo "$REPERTORY_RELEASE"
 
 RUN wget "$REPERTORY_RELEASE" && \
       mkdir /repertory && \
