@@ -61,7 +61,7 @@ ENTRYPOINT socat tcp-listen:9980,reuseaddr,fork tcp:localhost:8000 & \
   ./siad \
     --modules "$SIA_MODULES" \
     --sia-directory "$SIA_DATA_DIR" \
-    --api-addr "localhost:8000" && \
-   echo "only testing" && \
-  /repertory/repertory -set HostConfig.ApiPassword $(< /root/.sia/apipassword) && \
+    --api-addr "localhost:8000" & \
+   echo "only testing" & \
+  /repertory/repertory -set HostConfig.ApiPassword $(< /root/.sia/apipassword) & \
   /repertory/repertory -o big_writes "$REPERTORY_DATA_DIR"
