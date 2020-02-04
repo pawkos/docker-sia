@@ -26,7 +26,7 @@ if [ -z ${REPERTORY_RELEASE+x} ]; then \
 	| jq -r 'first(.values[] | select(.links.self.href | endswith("_debian10.zip")).links.self.href)'); \
 fi
 
-RUN curl -o /tmp/repertory.zip -L "${REPERTORY_RELEASE}"
+RUN curl -o /tmp/repertory.zip -L "${REPERTORY_RELEASE}" && \
       mkdir /repertory && \
       unzip -j /tmp/repertory.zip -d /repertory
 
@@ -35,6 +35,7 @@ ARG SIA_DIR="/sia"
 ARG SIA_DATA_DIR="/sia-data"
 
 ARG REPERTORY_DIR="/repertory"
+ARG REPERTORY_TOKEN="test1234"
 
 COPY --from=zip_downloader /sia/siac "${SIA_DIR}/siac"
 COPY --from=zip_downloader /sia/siad "${SIA_DIR}/siad"
@@ -61,7 +62,7 @@ ENV SIA_MODULES gctwhr
 ENV REPERTORY_DATA_DIR "/mnt/repertory"
 
 RUN cd /repertory && ./repertory -set RemoteMount.EnableRemoteMount true
-RUN cd /repertory && ./repertory -set RemoteMount.RemoteToken "test"
+RUN cd /repertory && ./repertory -set RemoteMount.RemoteToken "$REPERTORY_TOKEN"
 
 ENTRYPOINT socat tcp-listen:9980,reuseaddr,fork tcp:localhost:8000 & \
   ./siad \
