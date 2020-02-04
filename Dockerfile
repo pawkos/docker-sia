@@ -20,16 +20,15 @@ RUN wget "$SIA_RELEASE" && \
       unzip -j "$SIA_ZIP" "${SIA_PACKAGE}/siac" -d /sia && \
       unzip -j "$SIA_ZIP" "${SIA_PACKAGE}/siad" -d /sia
 
-RUN if [ -z ${REPERTORY_RELEASE+x} ]; then \
+RUN echo "**** install repertory ****" && \
+if [ -z ${REPERTORY_RELEASE+x} ]; then \
 	REPERTORY_RELEASE=$(curl -sX GET "https://api.bitbucket.org/2.0/repositories/blockstorage/repertory/downloads?pagelen=100" \
 	| jq -r 'first(.values[] | select(.links.self.href | endswith("_debian10.zip")).links.self.href)'); \
 fi
 
-RUN echo "$REPERTORY_RELEASE"
-
-RUN wget "$REPERTORY_RELEASE" && \
+RUN curl -o /tmp/repertory.zip -L "${REPERTORY_RELEASE}"
       mkdir /repertory && \
-      unzip -j "$REPERTORY_ZIP" -d /repertory
+      unzip -j /tmp/repertory.zip -d /repertory
 
 FROM debian:buster-slim
 ARG SIA_DIR="/sia"
